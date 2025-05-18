@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Signup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      padding-top: 80px;
+    }
+
+    form {
+      background-color: #fff;
+      display: inline-block;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+      width: 320px;
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .info {
+      font-size: 13px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Signup</h2>
+
+  <!-- Error message from PHP (if ?error=exists in URL) -->
+  <p id="errorMessage"></p>
+
+  <form id="signupForm" action="signup.php" method="POST">
+    <input type="text" name="username" placeholder="Username" required><br>
+
+    <input type="password" name="password" placeholder="Password" id="password" required><br>
+    <small class="info">Password must be at least 8 characters and include 1 uppercase letter.</small><br>
+    <span class="error" id="passwordError"></span><br>
+
+    <input type="text" name="fullname" placeholder="Full Name" required><br>
+    <input type="email" name="email" placeholder="Email Address" required><br>
+    <input type="date" name="birthday" required><br>
+    
+    <input type="submit" value="Sign Up">
+    <p style="font-size: 14px; margin-top: 15px;">
+      Already have an account? <a href="login.html">Log in here</a>
+    </p>
+  </form>
+
+  <script>
+    // Password validation
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      const password = document.getElementById('password').value;
+      const errorText = document.getElementById('passwordError');
+
+      const hasUppercase = /[A-Z]/.test(password);
+      const longEnough = password.length >= 8;
+
+      if (!hasUppercase || !longEnough) {
+        e.preventDefault(); // block form submission
+        errorText.textContent = "Password must be at least 8 characters and include 1 uppercase letter.";
+      } else {
+        errorText.textContent = "";
+      }
+    });
+
+    // Show error if duplicate found (from signup.php) and clean URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('error') === 'exists') {
+      document.getElementById('errorMessage').textContent =
+        "Username or email is already registered.";
+      if (history.replaceState) {
+        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        history.replaceState(null, "", cleanUrl);
+      }
+    }
+  </script>
+
+</body>
+</html>
